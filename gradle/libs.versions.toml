@@ -1,0 +1,27 @@
+[versions]
+kotlin-jvm = "1.9.10"
+
+ktor-plugin = "2.3.4"
+kotlin-plugin-serialization = "1.9.10"
+logback-classic = "1.4.11"
+
+[libraries]
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm"}
+ktor-server-core-jvm = { module = "io.ktor:ktor-server-core-jvm"}
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm"}
+ktor-server-compression-jvm = { module = "io.ktor:ktor-server-compression-jvm" }
+ktor-server-host-common-jvm = { module = "io.ktor:ktor-server-host-common-jvm" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages-jvm" }
+ktor-server-http-redirect-jvm = { module = "io.ktor:ktor-server-http-redirect-jvm" }
+ktor-server-auth-jvm = { module = "io.ktor:ktor-server-auth-jvm" }
+ktor-server-netty-jvm = { module = "io.ktor:ktor-server-netty-jvm" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-classic"}
+
+ktor-server-tests-jvm = { module = "io.ktor:ktor-server-tests-jvm" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin-jvm"}
+
+
+[plugins]
+ktor-plugin = { id = "io.ktor.plugin", version.ref = "ktor-plugin" }
+kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-plugin-serialization"}
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm" }
