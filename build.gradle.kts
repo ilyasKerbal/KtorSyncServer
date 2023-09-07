@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.http.redirect.jvm)
     implementation(libs.ktor.server.auth.jvm)
+    implementation(libs.ktor.auth.jwt)
     implementation(libs.ktor.server.netty.jvm)
     implementation(libs.logback.classic)
 

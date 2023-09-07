@@ -23,6 +23,8 @@ logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "lo
 ktor-server-tests-jvm = { module = "io.ktor:ktor-server-tests-jvm" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin-jvm"}
 
+ktor-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt" }
+
 
 [plugins]
 ktor-plugin = { id = "io.ktor.plugin", version.ref = "ktor-plugin" }
