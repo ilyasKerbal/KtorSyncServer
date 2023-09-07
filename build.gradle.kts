@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor.plugin)
     alias(libs.plugins.kotlin.plugin.serialization)
+    alias(libs.plugins.diffplug.spotless)
 }
 
 group = "dev.appmaster"
@@ -15,7 +16,25 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    apply(plugin = "com.diffplug.spotless")
+
+    spotless {
+        kotlin {
+            target("**/*.kt")
+            targetExclude(".idea/")
+            ktlint(libs.versions.ktlint.toString())
+        }
+    }
+}
+
 repositories {
+    google()
     mavenCentral()
 }
 

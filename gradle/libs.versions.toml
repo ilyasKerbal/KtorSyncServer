@@ -5,6 +5,9 @@ ktor-plugin = "2.3.4"
 kotlin-plugin-serialization = "1.9.10"
 logback-classic = "1.4.11"
 
+diffplug-spotless = "5.12.5"
+ktlint = "0.44.0"
+
 [libraries]
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm"}
 ktor-server-core-jvm = { module = "io.ktor:ktor-server-core-jvm"}
@@ -25,3 +28,4 @@ kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version
 ktor-plugin = { id = "io.ktor.plugin", version.ref = "ktor-plugin" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-plugin-serialization"}
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm" }
+diffplug-spotless = { id = "com.diffplug.spotless", version.ref = "diffplug-spotless" }
