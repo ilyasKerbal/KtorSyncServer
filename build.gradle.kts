@@ -51,6 +51,11 @@ dependencies {
     implementation(libs.ktor.server.netty.jvm)
     implementation(libs.logback.classic)
 
+    // Koin
+    implementation(libs.koin.core)
+    implementation(libs.koin.ktor)
+    implementation(libs.koin.logger)
+
     // Test
     testImplementation(libs.ktor.server.tests.jvm)
     testImplementation(libs.kotlin.test.junit)
