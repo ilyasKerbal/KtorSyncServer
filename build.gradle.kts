@@ -56,6 +56,11 @@ dependencies {
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger)
 
+    //Kmongo
+    implementation(libs.kmongo.coroutine.serialization)
+    implementation(libs.kmongo.async)
+    implementation(libs.kmongo.id.serialization)
+
     // Test
     testImplementation(libs.ktor.server.tests.jvm)
     testImplementation(libs.kotlin.test.junit)

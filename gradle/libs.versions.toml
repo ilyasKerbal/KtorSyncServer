@@ -8,7 +8,9 @@ logback-classic = "1.4.11"
 diffplug-spotless = "5.12.5"
 ktlint = "0.44.0"
 
-koin-version = "3.2.0"
+koin-version = "3.4.3"
+
+kmongo = "4.6.1"
 
 [libraries]
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm"}
@@ -30,6 +32,10 @@ ktor-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-version" }
 koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin-version" }
 koin-logger = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin-version" }
+
+kmongo-coroutine-serialization = { module = "org.litote.kmongo:kmongo-coroutine-serialization", version.ref = "kmongo" }
+kmongo-async = { module = "org.litote.kmongo:kmongo-async", version.ref = "kmongo" }
+kmongo-id-serialization = { module = "org.litote.kmongo:kmongo-id-serialization", version.ref = "kmongo" }
 
 
 [plugins]
