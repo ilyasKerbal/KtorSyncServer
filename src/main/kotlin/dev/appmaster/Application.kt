@@ -9,7 +9,7 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     configureKoin()
-
+    configureSerialization()
     configureHTTP()
     configureSecurity()
     configureRouting()
