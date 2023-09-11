@@ -2,6 +2,7 @@ package dev.appmaster.core.di
 
 
 import dev.appmaster.core.config.DatabaseConfig
+import dev.appmaster.core.config.JWTConfig
 import dev.appmaster.core.config.SecretConfig
 import dev.appmaster.core.util.createConnectionString
 import io.ktor.server.application.*
@@ -36,5 +37,14 @@ fun configModule(application: Application) = module {
             .createClient(connectionString = createConnectionString(get<DatabaseConfig>()))
             .getDatabase(get<DatabaseConfig>().name)
             .coroutine
+    }
+
+    single<JWTConfig>{
+        val jwtConfig = get<ApplicationConfig>().config("jwt")
+        JWTConfig(
+            issuer = jwtConfig.property("issuer").getString(),
+            audience = jwtConfig.property("audience").getString(),
+            claim = jwtConfig.property("claim").getString()
+        )
     }
 }
