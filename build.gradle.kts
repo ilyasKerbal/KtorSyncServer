@@ -61,6 +61,10 @@ dependencies {
     implementation(libs.kmongo.async)
     implementation(libs.kmongo.id.serialization)
 
+    //
+    implementation(libs.bouncy.castle)
+    implementation("io.ktor:ktor-server-auth-jwt-jvm:2.3.4")
+
     // Test
     testImplementation(libs.ktor.server.tests.jvm)
     testImplementation(libs.kotlin.test.junit)
