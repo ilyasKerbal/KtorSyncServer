@@ -9,7 +9,7 @@ import org.koin.logger.slf4jLogger
 
 fun Application.configureKoin() {
     install(Koin) {
-        slf4jLogger(level = Level.ERROR)
+        //slf4jLogger(level = Level.ERROR)
         modules(configModule(this@configureKoin))
         modules(authModule())
     }

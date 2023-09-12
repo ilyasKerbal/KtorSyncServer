@@ -6,4 +6,6 @@ object FailureMessages {
     const val UNAUTHORIZED_MESSAGE = "Unauthorized, you can not access this resource."
 
     const val NOT_FOUND_MESSAGE = "Resource Not Found"
+
+    const val BAD_CREDENTIALS = "Bad credentials, or request incomplete"
 }

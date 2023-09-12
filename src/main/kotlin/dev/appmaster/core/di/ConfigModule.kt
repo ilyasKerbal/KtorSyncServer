@@ -1,16 +1,22 @@
 package dev.appmaster.core.di
 
 
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import dev.appmaster.auth.data.tables.Devices
+import dev.appmaster.auth.data.tables.Users
 import dev.appmaster.core.config.DatabaseConfig
 import dev.appmaster.core.config.JWTConfig
 import dev.appmaster.core.config.SecretConfig
 import dev.appmaster.core.util.createConnectionString
 import io.ktor.server.application.*
 import io.ktor.server.config.*
+import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
-import org.litote.kmongo.coroutine.CoroutineDatabase
-import org.litote.kmongo.coroutine.coroutine
-import org.litote.kmongo.reactivestreams.KMongo
+import javax.sql.DataSource
 
 fun configModule(application: Application) = module {
     // Application config
@@ -29,14 +35,30 @@ fun configModule(application: Application) = module {
             name = databaseConf.property("name").getString(),
             user = databaseConf.property("user").getString(),
             password = databaseConf.property("password").getString(),
+            pool = databaseConf.property("pool").getString().toInt()
         )
     }
 
-    single<CoroutineDatabase>{
-        KMongo
-            .createClient(connectionString = createConnectionString(get<DatabaseConfig>()))
-            .getDatabase(get<DatabaseConfig>().name)
-            .coroutine
+    single<DataSource>(createdAtStart = true){
+        val databaseConfig = get<DatabaseConfig>()
+        val config = HikariConfig()
+        with(databaseConfig) {
+            config.password = password
+            config.jdbcUrl = "jdbc:postgresql://$host:$port/$name"
+            config.maximumPoolSize = pool
+            config.username = user
+        }
+        config.validate()
+        HikariDataSource(config)
+    }
+
+    single<Database>(createdAtStart = true){
+        val tables = arrayOf<UUIDTable>(Users, Devices)
+        val database = Database.connect(get<DataSource>())
+        transaction {
+            SchemaUtils.createMissingTablesAndColumns(*tables)
+        }
+        database
     }
 
     single<JWTConfig>{

@@ -5,5 +5,6 @@ data class DatabaseConfig(
     val port: String,
     val name: String,
     val user: String,
-    val password: String
+    val password: String,
+    val pool: Int
 )

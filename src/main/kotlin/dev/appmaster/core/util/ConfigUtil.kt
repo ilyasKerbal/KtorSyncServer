@@ -8,5 +8,6 @@ fun createConnectionString(dbConfig: DatabaseConfig): String = buildString {
     if (dbConfig.user.isNotBlank() && dbConfig.password.isNotBlank()){
         append("${dbConfig.user}:${dbConfig.password}@")
     }
-    append("${dbConfig.host}:${dbConfig.port}/?authMechanism=DEFAULT")
+    append(dbConfig.host)
+    if (dbConfig.port.isNotBlank()) append(":${dbConfig.port}")
 }
