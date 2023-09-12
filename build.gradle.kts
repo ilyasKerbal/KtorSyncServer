@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.ktor.server.http.redirect.jvm)
     implementation(libs.ktor.server.auth.jvm)
     implementation(libs.ktor.auth.jwt)
+    implementation(libs.ktor.server.auth.jwt)
     implementation(libs.ktor.server.netty.jvm)
     implementation(libs.logback.classic)
 
@@ -56,14 +57,17 @@ dependencies {
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger)
 
-    //Kmongo
-    implementation(libs.kmongo.coroutine.serialization)
-    implementation(libs.kmongo.async)
-    implementation(libs.kmongo.id.serialization)
-
-    //
+    // Bouncy Castle cryptography
     implementation(libs.bouncy.castle)
-    implementation("io.ktor:ktor-server-auth-jwt-jvm:2.3.4")
+
+    // Exposed
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.jodatime)
+
+    implementation(libs.postgres)
+    implementation(libs.hikari.cp)
 
     // Test
     testImplementation(libs.ktor.server.tests.jvm)
