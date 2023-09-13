@@ -4,6 +4,7 @@ import dev.appmaster.auth.domain.controller.AuthController
 import dev.appmaster.auth.domain.model.AuthPrincipal
 import dev.appmaster.auth.external.AuthResponse
 import dev.appmaster.auth.external.LoginRequest
+import dev.appmaster.auth.external.RemoveDeviceRequest
 import dev.appmaster.auth.external.SignupRequest
 import dev.appmaster.core.config.EndPoint
 import dev.appmaster.core.config.FailureMessages
@@ -52,6 +53,22 @@ fun Route.authRout() {
                 val principal = call.authentication.principal<AuthPrincipal>() ?: throw BadRequestException(FailureMessages.BAD_CREDENTIALS)
 
                 val authResponse = authController.logout(principal.deviceId)
+                val response = authResponse.generateHttpResponse()
+
+                call.respond(response.code, response.body)
+            }
+        }
+    }
+
+    route(EndPoint.RemoveDevice.path) {
+        authenticate(strategy = AuthenticationStrategy.Required){
+            post {
+                val principal = call.authentication.principal<AuthPrincipal>() ?: throw BadRequestException(FailureMessages.BAD_CREDENTIALS)
+                val removeDeviceRequest = runCatching { call.receive<RemoveDeviceRequest>() }.getOrElse {
+                    throw BadRequestException(FailureMessages.BAD_CREDENTIALS)
+                }
+                println("======> Remove device: ${removeDeviceRequest.deviceId} from ${principal.deviceId}")
+                val authResponse = authController.removeDevice(removeDeviceRequest.deviceId, principal.deviceId)
                 val response = authResponse.generateHttpResponse()
 
                 call.respond(response.code, response.body)

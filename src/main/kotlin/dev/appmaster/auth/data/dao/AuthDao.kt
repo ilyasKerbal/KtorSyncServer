@@ -3,6 +3,7 @@ package dev.appmaster.auth.data.dao
 import dev.appmaster.auth.data.encryption.Hash
 import dev.appmaster.auth.data.entity.EntityDevice
 import dev.appmaster.auth.data.entity.EntityUser
+import dev.appmaster.auth.data.tables.Devices
 import dev.appmaster.auth.data.tables.Users
 import dev.appmaster.auth.external.SignupRequest
 import org.jetbrains.exposed.sql.and
@@ -21,6 +22,8 @@ interface AuthDao {
     fun addDevice(userId: UUID, notificationId: String, deviceName: String, deviceBrand: String): String
 
     fun removeDevice(deviceId: String): Boolean
+
+    fun getUserDeices(currentDevice: String): List<String>
 }
 
 class AuthDaoImpl(
@@ -75,5 +78,14 @@ class AuthDaoImpl(
             return@transaction true
         }
         return@transaction false
+    }
+
+    override fun getUserDeices(currentDevice: String): List<String> = transaction {
+        val device = EntityDevice[UUID.fromString(currentDevice)]
+        EntityDevice.find {
+            Devices.user eq device.user.id
+        }.map {
+            it.id.value.toString()
+        }
     }
 }

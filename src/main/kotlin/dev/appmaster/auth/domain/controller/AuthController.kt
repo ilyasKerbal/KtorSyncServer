@@ -9,7 +9,6 @@ import dev.appmaster.core.config.FailureMessages
 import dev.appmaster.core.config.StatusMessages
 import dev.appmaster.core.exception.UnauthorizedException
 import io.ktor.server.plugins.*
-import java.lang.Exception
 
 class AuthController(
     private val authDao: AuthDao,
@@ -56,6 +55,23 @@ class AuthController(
         AuthResponse.status(StatusMessages.LOGOUT_SUCCESSFUL)
     } catch (e: Exception) {
        AuthResponse.failed(e.message!!)
+    }
+
+    fun removeDevice(deviceId: String, currentDevice: String): AuthResponse = try {
+        if (deviceId == currentDevice) throw BadRequestException("You cannot remove the current device, log out instead")
+        if (deviceId.isBlank()) throw BadRequestException("Invalid device ID")
+
+        val devices = authDao.getUserDeices(currentDevice)
+        if (deviceId !in devices) throw UnauthorizedException("You cannot remove this device")
+
+        val operation = authDao.removeDevice(deviceId)
+        if (!operation) throw Exception("No access to device")
+
+        AuthResponse.status(message = "Device removed successfully")
+    } catch (e: UnauthorizedException) {
+        AuthResponse.unauthorized(e.message)
+    } catch (e: Exception) {
+        AuthResponse.failed(e.message!!)
     }
 
     private fun validateSignupRequest(signupRequest: SignupRequest) {
