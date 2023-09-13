@@ -3,8 +3,11 @@ package dev.appmaster.auth.domain.controller
 import dev.appmaster.auth.data.dao.AuthDao
 import dev.appmaster.auth.data.jwt.JWTController
 import dev.appmaster.auth.external.AuthResponse
+import dev.appmaster.auth.external.LoginRequest
 import dev.appmaster.auth.external.SignupRequest
 import dev.appmaster.core.config.FailureMessages
+import dev.appmaster.core.config.StatusMessages
+import dev.appmaster.core.exception.UnauthorizedException
 import io.ktor.server.plugins.*
 import java.lang.Exception
 
@@ -32,8 +35,27 @@ class AuthController(
         AuthResponse.failed(FailureMessages.FAILED_MESSAGE)
     }
 
-    fun login() {
+    fun login(loginRequest: LoginRequest): AuthResponse = try {
+        validateLoginRequest(loginRequest)
 
+        val entityUser = authDao.getUserByEmailAndPassword(loginRequest.email, loginRequest.password) ?: throw UnauthorizedException(FailureMessages.UNAUTHORIZED_MESSAGE)
+        val deviceId = authDao.addDevice(entityUser.id.value, loginRequest.notificationId, loginRequest.deviceName, loginRequest.deviceBrand)
+
+        AuthResponse.success(token = jwtController.sign(deviceId), message = "Login successful")
+    } catch (e: BadRequestException) {
+        AuthResponse.failed(e.message!!)
+    } catch (e: UnauthorizedException) {
+        AuthResponse.unauthorized(e.message)
+    } catch (e: Exception) {
+        AuthResponse.failed(FailureMessages.FAILED_MESSAGE)
+    }
+
+    fun logout(deviceId: String): AuthResponse = try {
+        val operation = authDao.removeDevice(deviceId)
+        if (!operation) throw BadRequestException("Invalid request")
+        AuthResponse.status(StatusMessages.LOGOUT_SUCCESSFUL)
+    } catch (e: Exception) {
+       AuthResponse.failed(e.message!!)
     }
 
     private fun validateSignupRequest(signupRequest: SignupRequest) {
@@ -49,6 +71,19 @@ class AuthController(
             else -> return
         }
 
+        throw BadRequestException(message)
+    }
+
+    private fun validateLoginRequest(loginRequest: LoginRequest) {
+        val message = when {
+            loginRequest.email.isBlank() -> "Email cannot be blank"
+            !validateEmail(loginRequest.email) -> "Invalid email"
+            loginRequest.password.isBlank() -> "Password cannot be blank"
+            loginRequest.password.length in 1..5 -> "Password must be longer than 5 characters"
+            loginRequest.notificationId.isBlank() -> "Invalid notification token"
+            loginRequest.notificationId.length > 5000 -> "Notification token is too long"
+            else -> return
+        }
         throw BadRequestException(message)
     }
 

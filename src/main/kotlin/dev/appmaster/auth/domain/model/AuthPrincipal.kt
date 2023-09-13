@@ -11,11 +11,7 @@ data class AuthPrincipal(
     val lastOpen: DateTime,
     val deviceName: String,
     val deviceBrand: String,
-    val createDate: DateTime,
-    val userId: String,
-    val userName: String,
-    val userEmail: String,
-    val userCreateDate: DateTime
+    val createDate: DateTime
 ): Principal {
     companion object {
         fun fromEntity(entity: EntityDevice): AuthPrincipal = AuthPrincipal(
@@ -25,11 +21,7 @@ data class AuthPrincipal(
             lastOpen = entity.lastOpen,
             deviceName = entity.deviceName,
             deviceBrand = entity.deviceBrand,
-            createDate = entity.createDate,
-            userId = entity.user.id.value.toString(),
-            userName = entity.user.name,
-            userEmail = entity.user.email,
-            userCreateDate = entity.user.createDate,
+            createDate = entity.createDate
         )
     }
 }

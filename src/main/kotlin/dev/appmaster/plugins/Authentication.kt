@@ -20,7 +20,6 @@ fun Application.configureAuthentication() {
             validate { credential ->
                 val deviceID = credential.payload.getClaim(jwtConfig.claim).asString()
                 val deviceEntity = inject<AuthDao>().value.getDeviceById(deviceID) ?: return@validate null
-
                 return@validate AuthPrincipal.fromEntity(deviceEntity)
             }
         }

@@ -29,5 +29,10 @@ data class AuthResponse(
             message,
             token
         )
+
+        fun status(message: String) = AuthResponse(
+            State.SUCCESS,
+            message
+        )
     }
 }

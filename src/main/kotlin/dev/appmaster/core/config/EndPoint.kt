@@ -8,6 +8,8 @@ sealed class EndPoint(val path: String) {
 
     data object Login: EndPoint(path = "/login")
 
+    data object Logout: EndPoint(path = "/logout")
+
     data object Check: EndPoint(path = "/check")
 
     data object Content: EndPoint(path = "/content")
