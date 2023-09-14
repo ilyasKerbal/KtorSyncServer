@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.postgres)
     implementation(libs.hikari.cp)
 
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.0")
+
     // Test
     testImplementation(libs.ktor.server.tests.jvm)
     testImplementation(libs.kotlin.test.junit)

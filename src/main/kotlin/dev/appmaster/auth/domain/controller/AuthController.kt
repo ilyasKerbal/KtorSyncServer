@@ -2,9 +2,9 @@ package dev.appmaster.auth.domain.controller
 
 import dev.appmaster.auth.data.dao.AuthDao
 import dev.appmaster.auth.data.jwt.JWTController
-import dev.appmaster.auth.external.AuthResponse
-import dev.appmaster.auth.external.LoginRequest
-import dev.appmaster.auth.external.SignupRequest
+import dev.appmaster.auth.external.response.AuthResponse
+import dev.appmaster.auth.external.request.LoginRequest
+import dev.appmaster.auth.external.request.SignupRequest
 import dev.appmaster.core.config.FailureMessages
 import dev.appmaster.core.config.StatusMessages
 import dev.appmaster.core.exception.UnauthorizedException

@@ -1,4 +1,4 @@
-package dev.appmaster.auth.external
+package dev.appmaster.auth.external.request
 
 import kotlinx.serialization.Serializable
 

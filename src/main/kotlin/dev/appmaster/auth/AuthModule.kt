@@ -6,6 +6,7 @@ import dev.appmaster.auth.data.encryption.HashImpl
 import dev.appmaster.auth.data.jwt.JWTController
 import dev.appmaster.auth.data.jwt.JWTControllerImpl
 import dev.appmaster.auth.domain.controller.AuthController
+import dev.appmaster.auth.domain.controller.ProfileController
 import dev.appmaster.core.config.JWTConfig
 import dev.appmaster.core.config.SecretConfig
 import org.koin.core.module.dsl.factoryOf
@@ -20,4 +21,6 @@ fun authModule() = module {
     single<AuthDao>{ AuthDaoImpl(get<Hash>()) }
 
     factoryOf(::AuthController)
+
+    factoryOf(::ProfileController)
 }

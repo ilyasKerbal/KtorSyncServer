@@ -1,4 +1,4 @@
-package dev.appmaster.auth.external
+package dev.appmaster.auth.external.response
 
 import dev.appmaster.core.domain.model.Response
 import dev.appmaster.core.domain.model.State

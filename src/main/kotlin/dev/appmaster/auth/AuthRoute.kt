@@ -1,15 +1,14 @@
 package dev.appmaster.auth
 
 import dev.appmaster.auth.domain.controller.AuthController
+import dev.appmaster.auth.domain.controller.ProfileController
 import dev.appmaster.auth.domain.model.AuthPrincipal
-import dev.appmaster.auth.external.AuthResponse
-import dev.appmaster.auth.external.LoginRequest
-import dev.appmaster.auth.external.RemoveDeviceRequest
-import dev.appmaster.auth.external.SignupRequest
+import dev.appmaster.auth.external.request.LoginRequest
+import dev.appmaster.auth.external.request.RemoveDeviceRequest
+import dev.appmaster.auth.external.request.SignupRequest
 import dev.appmaster.core.config.EndPoint
 import dev.appmaster.core.config.FailureMessages
 import dev.appmaster.core.domain.model.generateHttpResponse
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.*
@@ -20,6 +19,8 @@ import org.koin.ktor.ext.inject
 
 fun Route.authRout() {
     val authController: AuthController by inject<AuthController>()
+    val profileController: ProfileController by inject<ProfileController>()
+
     route(EndPoint.Signup.path) {
         post {
             val signupRequest = runCatching { call.receive<SignupRequest>() }.getOrElse {
@@ -67,12 +68,28 @@ fun Route.authRout() {
                 val removeDeviceRequest = runCatching { call.receive<RemoveDeviceRequest>() }.getOrElse {
                     throw BadRequestException(FailureMessages.BAD_CREDENTIALS)
                 }
-                println("======> Remove device: ${removeDeviceRequest.deviceId} from ${principal.deviceId}")
                 val authResponse = authController.removeDevice(removeDeviceRequest.deviceId, principal.deviceId)
                 val response = authResponse.generateHttpResponse()
 
                 call.respond(response.code, response.body)
             }
+        }
+    }
+
+    route(EndPoint.User.path) {
+        authenticate {
+            get {
+                val principal = call.authentication.principal<AuthPrincipal>() ?: throw BadRequestException(FailureMessages.BAD_CREDENTIALS)
+
+                val profileResponse = profileController.getProfileInfo(principal.deviceId)
+
+                val response = profileResponse.generateHttpResponse()
+
+                call.respond(response.code, response.body)
+            }
+//            post {
+//                val principal = call.authentication.principal<AuthPrincipal>() ?: throw BadRequestException(FailureMessages.BAD_CREDENTIALS)
+//            }
         }
     }
 }

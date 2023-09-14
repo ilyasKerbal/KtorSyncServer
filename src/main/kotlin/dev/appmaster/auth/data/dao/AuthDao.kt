@@ -5,7 +5,7 @@ import dev.appmaster.auth.data.entity.EntityDevice
 import dev.appmaster.auth.data.entity.EntityUser
 import dev.appmaster.auth.data.tables.Devices
 import dev.appmaster.auth.data.tables.Users
-import dev.appmaster.auth.external.SignupRequest
+import dev.appmaster.auth.external.request.SignupRequest
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
@@ -24,6 +24,8 @@ interface AuthDao {
     fun removeDevice(deviceId: String): Boolean
 
     fun getUserDeices(currentDevice: String): List<String>
+
+    fun getUserFromDevice(deviceId: String): EntityUser?
 }
 
 class AuthDaoImpl(
@@ -87,5 +89,10 @@ class AuthDaoImpl(
         }.map {
             it.id.value.toString()
         }
+    }
+
+    override fun getUserFromDevice(deviceId: String): EntityUser? = transaction {
+        val device = EntityDevice.findById(UUID.fromString(deviceId)) ?: return@transaction null
+        EntityUser.findById(device.user.id)
     }
 }
