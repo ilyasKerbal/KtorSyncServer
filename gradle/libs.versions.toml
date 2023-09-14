@@ -18,6 +18,8 @@ exposed = "0.43.0"
 postgres = "42.5.4"
 hikari-cp = "5.0.1"
 
+kotlinx-datetime = "0.4.0"
+
 [libraries]
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm"}
 ktor-server-core-jvm = { module = "io.ktor:ktor-server-core-jvm"}
@@ -50,6 +52,8 @@ exposed-jodatime = { module = "org.jetbrains.exposed:exposed-jodatime", version.
 postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 
 hikari-cp = { module = "com.zaxxer:HikariCP", version.ref = "hikari-cp" }
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime-jvm", version.ref = "kotlinx-datetime" }
 
 
 [plugins]
