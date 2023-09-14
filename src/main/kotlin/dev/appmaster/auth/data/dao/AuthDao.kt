@@ -26,6 +26,8 @@ interface AuthDao {
     fun getUserDeices(currentDevice: String): List<String>
 
     fun getUserFromDevice(deviceId: String): EntityUser?
+
+    fun updateUserById(userId: UUID, name: String, pswd: String?): EntityUser
 }
 
 class AuthDaoImpl(
@@ -94,5 +96,12 @@ class AuthDaoImpl(
     override fun getUserFromDevice(deviceId: String): EntityUser? = transaction {
         val device = EntityDevice.findById(UUID.fromString(deviceId)) ?: return@transaction null
         EntityUser.findById(device.user.id)
+    }
+
+    override fun updateUserById(userId: UUID, name: String, pswd: String?): EntityUser = transaction {
+        EntityUser[userId].apply {
+            this.name = name
+            if (pswd != null) this.password = hash.hash(pswd)
+        }
     }
 }

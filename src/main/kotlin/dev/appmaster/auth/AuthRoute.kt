@@ -4,6 +4,7 @@ import dev.appmaster.auth.domain.controller.AuthController
 import dev.appmaster.auth.domain.controller.ProfileController
 import dev.appmaster.auth.domain.model.AuthPrincipal
 import dev.appmaster.auth.external.request.LoginRequest
+import dev.appmaster.auth.external.request.ProfileUpdateRequest
 import dev.appmaster.auth.external.request.RemoveDeviceRequest
 import dev.appmaster.auth.external.request.SignupRequest
 import dev.appmaster.core.config.EndPoint
@@ -87,9 +88,17 @@ fun Route.authRout() {
 
                 call.respond(response.code, response.body)
             }
-//            post {
-//                val principal = call.authentication.principal<AuthPrincipal>() ?: throw BadRequestException(FailureMessages.BAD_CREDENTIALS)
-//            }
+            post {
+                val principal = call.authentication.principal<AuthPrincipal>() ?: throw BadRequestException(FailureMessages.BAD_CREDENTIALS)
+
+                val profileUpdateRequest = runCatching { call.receive<ProfileUpdateRequest>() }.getOrElse {
+                    throw BadRequestException(FailureMessages.BAD_CREDENTIALS)
+                }
+                val profileResponse = profileController.updateProfile(principal.deviceId, profileUpdateRequest)
+                val response = profileResponse.generateHttpResponse()
+
+                call.respond(response.code, response.body)
+            }
         }
     }
 }
