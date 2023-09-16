@@ -5,6 +5,7 @@ import dev.appmaster.core.config.EndPoint
 import dev.appmaster.core.config.StatusMessages
 import dev.appmaster.core.domain.model.State
 import dev.appmaster.core.domain.model.StatusResponse
+import dev.appmaster.inventory.inventoryRoute
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -17,8 +18,10 @@ fun Application.configureRouting() {
             call.respond(status = HttpStatusCode.OK, message = StatusResponse(State.SUCCESS, StatusMessages.SERVER_OK))
         }
 
-        staticResources("/content", "static")
+        staticResources("/static", "static")
 
         authRout()
+
+        inventoryRoute()
     }
 }

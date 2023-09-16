@@ -4,6 +4,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+src/main/resources/uploads/*
+
 ### STS ###
 .apt_generated
 .classpath

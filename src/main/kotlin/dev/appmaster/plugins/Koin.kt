@@ -2,6 +2,7 @@ package dev.appmaster.plugins
 
 import dev.appmaster.auth.authModule
 import dev.appmaster.core.di.configModule
+import dev.appmaster.inventory.inventoryModule
 import io.ktor.server.application.*
 import org.koin.core.logger.Level
 import org.koin.ktor.plugin.Koin
@@ -12,5 +13,6 @@ fun Application.configureKoin() {
         //slf4jLogger(level = Level.ERROR)
         modules(configModule(this@configureKoin))
         modules(authModule())
+        modules(inventoryModule)
     }
 }

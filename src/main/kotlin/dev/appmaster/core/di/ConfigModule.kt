@@ -8,7 +8,7 @@ import dev.appmaster.auth.data.tables.Users
 import dev.appmaster.core.config.DatabaseConfig
 import dev.appmaster.core.config.JWTConfig
 import dev.appmaster.core.config.SecretConfig
-import dev.appmaster.core.util.createConnectionString
+import dev.appmaster.inventory.data.tables.Items
 import io.ktor.server.application.*
 import io.ktor.server.config.*
 import org.jetbrains.exposed.dao.id.UUIDTable
@@ -53,7 +53,7 @@ fun configModule(application: Application) = module {
     }
 
     single<Database>(createdAtStart = true){
-        val tables = arrayOf<UUIDTable>(Users, Devices)
+        val tables = arrayOf<UUIDTable>(Users, Devices, Items)
         val database = Database.connect(get<DataSource>())
         transaction {
             SchemaUtils.createMissingTablesAndColumns(*tables)

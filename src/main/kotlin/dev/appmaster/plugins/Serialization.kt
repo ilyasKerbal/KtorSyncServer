@@ -11,6 +11,7 @@ fun Application.configureSerialization() {
         json(
             Json {
                 prettyPrint = true
+                encodeDefaults= false
             },
             contentType = ContentType.Application.Json
         )
