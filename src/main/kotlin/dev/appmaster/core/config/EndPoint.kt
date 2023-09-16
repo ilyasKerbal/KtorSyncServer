@@ -14,7 +14,9 @@ sealed class EndPoint(val path: String) {
 
     data object User: EndPoint(path = "/profile")
 
-    data object Check: EndPoint(path = "/check")
-
-    data object Content: EndPoint(path = "/content")
+    data object Inventory: EndPoint(path = "/inventory/{filter}") // filter can be: all or changed
+    data object InventoryAdd: EndPoint(path = "/inventory_add")
+    data object InventoryRemove: EndPoint(path = "/inventory_remove")
+    data object InventoryUpdate: EndPoint(path = "/inventory_update")
+    data object ImageContent: EndPoint(path = "/images/{name}")
 }
