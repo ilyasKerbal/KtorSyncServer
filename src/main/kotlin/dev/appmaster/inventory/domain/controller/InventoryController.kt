@@ -24,10 +24,12 @@ class InventoryController(
 
     fun addInventory(
         deviceId: String,
-        requestContent: String,
+        requestContent: String?,
         fileName: String?,
         imageBytes: ByteArray?
     ) : InventoryResponse = executeOrCatchInventory {
+        if (requestContent.isNullOrBlank()) throw BadRequestException("Invalid inventory data")
+
         val userEntity = authDao.getUserFromDevice(deviceId) ?: throw UnauthorizedException("You are not authorized to add inventory")
         val inventoryRequest = runCatching { Json.decodeFromString<InventoryRequest>(requestContent) }.getOrNull() ?: throw BadRequestException("Invalid inventory data")
 

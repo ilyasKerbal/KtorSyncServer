@@ -7,6 +7,7 @@ import dev.appmaster.core.domain.model.HttpResponse
 import dev.appmaster.core.domain.model.generateHttpResponse
 import dev.appmaster.inventory.domain.controller.InventoryController
 import dev.appmaster.inventory.external.response.InventoryResponse
+import dev.appmaster.inventory.utils.handleRouteWithFile
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -38,39 +39,16 @@ fun Route.inventoryRoute() {
     route(EndPoint.InventoryAdd.path) {
         authenticate {
             post {
-                val authPrincipal = call.authentication.principal<AuthPrincipal>() ?: throw BadRequestException(FailureMessages.UNAUTHORIZED_MESSAGE)
-                val contentLength = runCatching { call.request.header(HttpHeaders.ContentLength)!!.toLong() }.getOrNull() ?: throw BadRequestException("Request size unavailable")
-                if (contentLength > 5_000_000) throw BadRequestException("Request size limit is 5MB")
-
-                val multipartData = call.receiveMultipart()
-                var jsonString = ""
-                var fileName: String? = null
-                var imageBytes: ByteArray? = null
-                multipartData.forEachPart { part: PartData ->
-                    when(part) {
-                        is PartData.FormItem -> {
-                            if (part.contentType == ContentType.Application.Json && part.name == "item") {
-                                jsonString = part.value
-                            }
-                        }
-                        is PartData.FileItem -> {
-                            if (part.name == "itemImage" && part.contentType?.match(ContentType.Image.Any) == true) {
-                                part.originalFileName?.let { fileName = it }
-                                imageBytes = part.streamProvider().readBytes()
-                            }
-                        }
-                        else -> {}
-                    }
-                    part.dispose()
+                handleRouteWithFile(
+                    call = call
+                ) { deviceId, json, filename, fileBytes ->
+                    inventoryController.addInventory(
+                        deviceId = deviceId,
+                        requestContent = json,
+                        fileName = filename,
+                        imageBytes = fileBytes
+                    )
                 }
-                val inventoryResponse = inventoryController.addInventory(
-                    deviceId = authPrincipal.deviceId,
-                    requestContent = jsonString,
-                    fileName = fileName,
-                    imageBytes = imageBytes
-                )
-                val response = inventoryResponse.generateHttpResponse()
-                call.respond(response.code, response.body)
             }
         }
     }
