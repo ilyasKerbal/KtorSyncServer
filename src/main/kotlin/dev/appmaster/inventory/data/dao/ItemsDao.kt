@@ -6,6 +6,7 @@ import dev.appmaster.inventory.data.tables.Items
 import dev.appmaster.inventory.domain.model.Inventory
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SizedIterable
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
@@ -65,7 +66,7 @@ class ItemsDaoImpl : ItemsDao {
     override fun getItemsFroUser(userId: EntityID<UUID>, limit: Int, skip: Long): List<Inventory> = transaction {
         EntityItem.find {
             Items.user eq userId
-        }.limit(n = limit, offset = skip).map { entity ->
+        }.orderBy(Items.createDate to SortOrder.DESC).limit(n = limit, offset = skip).map { entity ->
             val item = Inventory.fromItemEntity(entity)
             item.imageTag = item.imageTag?.let { "/images/$it" }
             item
