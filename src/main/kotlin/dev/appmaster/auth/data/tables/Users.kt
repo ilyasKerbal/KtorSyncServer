@@ -9,5 +9,5 @@ object Users: UUIDTable() {
     val name: Column<String> = varchar("name", length = 30)
     val email: Column<String> = text("email")
     val password: Column<String> = text("password")
-    val createDate: Column<DateTime> = datetime("create_date").default(DateTime.now())
+    val createDate: Column<DateTime> = datetime("create_date").clientDefault { DateTime.now() }
 }
