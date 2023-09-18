@@ -60,6 +60,28 @@ class InventoryController(
         InventoryResponse.success(inventory = inventoryResult, message = "Item added successful")
     }
 
+    fun deleteInventory(deviceId: String, itemId: String): InventoryResponse = executeOrCatchInventory {
+        if(itemId.isBlank()) throw BadRequestException("Invalid item ID")
+        val userEntity = authDao.getUserFromDevice(deviceId) ?: throw UnauthorizedException("You are not authorized to add inventory")
+
+        val itemEntity = itemsDao.getInventoryById(itemId) ?: throw BadRequestException("Invalid item ID")
+
+        if (!itemsDao.userCanDeleteInventory(userEntity, itemEntity)) throw UnauthorizedException("You cannot delete this item")
+
+        itemEntity.imageTag?.let {
+            val file = File("src/main/resources/uploads/$it")
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+
+        val result = itemsDao.deleteItemByID(itemEntity.id.value)
+
+        if (!result) throw BadRequestException("Item deleted or unavailable")
+
+        InventoryResponse.status("Item deleted successfully")
+    }
+
     private fun executeOrCatchInventory(
         block: () -> InventoryResponse
     ): InventoryResponse = try {

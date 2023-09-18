@@ -8,6 +8,12 @@ import java.util.UUID
 
 interface ItemsDao {
     fun insertInventory(userID: UUID, inventory: Inventory): EntityItem
+
+    fun getInventoryById(itemId: String): EntityItem?
+
+    fun userCanDeleteInventory(user: EntityUser, item: EntityItem): Boolean
+
+    fun deleteItemByID(itemId: UUID): Boolean
 }
 
 class ItemsDaoImpl : ItemsDao {
@@ -24,5 +30,22 @@ class ItemsDaoImpl : ItemsDao {
             this.expiryDateAlert = inventory.expiryDateAlert
             this.expiryDate = Inventory.fromLocalDateToJoda(inventory.expiryDate)
         }
+    }
+
+    override fun getInventoryById(itemId: String): EntityItem? = transaction {
+        EntityItem.findById(UUID.fromString(itemId))
+    }
+
+    override fun userCanDeleteInventory(user: EntityUser, item: EntityItem): Boolean = transaction {
+        item.user.id == user.id
+    }
+
+    override fun deleteItemByID(itemId: UUID): Boolean = transaction {
+        val item = EntityItem.findById(itemId)
+        item?.run {
+            delete()
+            return@transaction true
+        }
+        return@transaction false
     }
 }

@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class InventoryRequest(
+    val id: String? = null,
     val title: String,
     val description: String,
     val barCode: String? = null,

@@ -32,5 +32,10 @@ data class InventoryResponse(
             status = State.NOT_FOUND,
             message = message
         )
+
+        fun status(message: String) = InventoryResponse(
+            status = State.SUCCESS,
+            message = message
+        )
     }
 }

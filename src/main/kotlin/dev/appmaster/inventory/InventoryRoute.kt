@@ -6,6 +6,7 @@ import dev.appmaster.core.config.FailureMessages
 import dev.appmaster.core.domain.model.HttpResponse
 import dev.appmaster.core.domain.model.generateHttpResponse
 import dev.appmaster.inventory.domain.controller.InventoryController
+import dev.appmaster.inventory.external.request.InventoryDeleteRequest
 import dev.appmaster.inventory.external.response.InventoryResponse
 import dev.appmaster.inventory.utils.handleRouteWithFile
 import io.ktor.http.*
@@ -49,6 +50,23 @@ fun Route.inventoryRoute() {
                         imageBytes = fileBytes
                     )
                 }
+            }
+        }
+    }
+
+    route(EndPoint.InventoryRemove.path) {
+        authenticate {
+            post {
+                val authPrincipal = call.authentication.principal<AuthPrincipal>() ?: throw BadRequestException(FailureMessages.UNAUTHORIZED_MESSAGE)
+                val deleteRequest = runCatching { call.receive<InventoryDeleteRequest>() }.getOrNull() ?: throw BadRequestException(FailureMessages.BAD_CREDENTIALS)
+
+                val inventoryResponse = inventoryController.deleteInventory(
+                    deviceId = authPrincipal.deviceId,
+                    itemId = deleteRequest.id
+                )
+                val response = inventoryResponse.generateHttpResponse()
+
+                call.respond(response.code, response.body)
             }
         }
     }
