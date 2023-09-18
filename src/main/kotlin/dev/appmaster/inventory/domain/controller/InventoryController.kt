@@ -7,6 +7,7 @@ import dev.appmaster.core.exception.UnauthorizedException
 import dev.appmaster.inventory.data.dao.ItemsDao
 import dev.appmaster.inventory.domain.model.Inventory
 import dev.appmaster.inventory.external.request.InventoryRequest
+import dev.appmaster.inventory.external.response.AllInventoryResponse
 import dev.appmaster.inventory.external.response.InventoryResponse
 import dev.appmaster.inventory.utils.getFileExtension
 import dev.appmaster.inventory.utils.isImageExtValid
@@ -16,6 +17,7 @@ import io.ktor.util.*
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.util.UUID
+import kotlin.math.ceil
 
 class InventoryController(
     private val itemsDao: ItemsDao,
@@ -80,6 +82,34 @@ class InventoryController(
         if (!result) throw BadRequestException("Item deleted or unavailable")
 
         InventoryResponse.status("Item deleted successfully")
+    }
+
+    fun getAllInventory(deviceId: String, page: Int, pageSize: Int = 10): AllInventoryResponse = try {
+        val userEntity = authDao.getUserFromDevice(deviceId) ?: throw UnauthorizedException("You are not authorized to add inventory")
+        val dataSize: Long = itemsDao.countItemsForUser(userEntity.id)
+        val totalPages = ((dataSize + pageSize - 1) / pageSize).coerceAtLeast(1)
+
+        if (page > totalPages) throw BadRequestException("Invalid page number")
+
+        val skip: Long = ((page - 1).toLong()) * pageSize
+
+        val items: List<Inventory> = itemsDao.getItemsFroUser(
+            userId = userEntity.id, limit = pageSize, skip = skip
+        )
+
+        AllInventoryResponse.success(
+            message = "Query successful",
+            totalPages = totalPages,
+            currentPage = page,
+            totalItems = dataSize,
+            items = items
+        )
+    } catch (e: BadRequestException) {
+        AllInventoryResponse.failed(e.message!!)
+    } catch (e: UnauthorizedException) {
+        AllInventoryResponse.unauthorized(e.message)
+    } catch (e: Exception) {
+        AllInventoryResponse.failed(e.message ?: e.toString())
     }
 
     private fun executeOrCatchInventory(

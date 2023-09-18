@@ -3,6 +3,7 @@ package dev.appmaster.inventory.domain.model
 import dev.appmaster.inventory.data.entity.EntityItem
 import dev.appmaster.inventory.external.request.InventoryRequest
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 import org.joda.time.DateTime
 
@@ -16,7 +17,9 @@ data class Inventory(
     var lowStockAlert: Boolean,
     var lowStock: Int? = null,
     var expiryDateAlert: Boolean,
-    var expiryDate: LocalDate? = null
+    var expiryDate: LocalDate? = null,
+    var createDate: LocalDateTime? = null,
+    var updateDate: LocalDateTime? = null
 ){
     companion object {
         fun fromItemEntity(entityItem: EntityItem) = Inventory(
@@ -28,7 +31,9 @@ data class Inventory(
             lowStockAlert = entityItem.lowStockAlert,
             lowStock = entityItem.lowStock,
             expiryDateAlert = entityItem.expiryDateAlert,
-            expiryDate = entityItem.expiryDate?.let { jodaDateTime2KotlinxDate(it) }
+            expiryDate = entityItem.expiryDate?.let { jodaDateTime2KotlinxDate(it) },
+            createDate = jodaToLocalDateTime(entityItem.createDate),
+            updateDate = jodaToLocalDateTime(entityItem.updateDate)
         )
 
         fun fromInventoryRequest(request: InventoryRequest) = Inventory(
@@ -59,6 +64,18 @@ data class Inventory(
                 year = year,
                 monthNumber = month,
                 dayOfMonth = day
+            )
+        }
+
+        private fun jodaToLocalDateTime(joda: DateTime): LocalDateTime {
+            return LocalDateTime(
+                year = joda.year,
+                monthNumber = joda.monthOfYear,
+                dayOfMonth = joda.dayOfMonth,
+                hour = joda.hourOfDay,
+                minute = joda.minuteOfHour,
+                second = joda.secondOfMinute,
+                nanosecond = 0
             )
         }
     }

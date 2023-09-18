@@ -70,4 +70,20 @@ fun Route.inventoryRoute() {
             }
         }
     }
+
+    route(EndPoint.InventoryAll.path) {
+        authenticate {
+            get {
+                val authPrincipal = call.authentication.principal<AuthPrincipal>() ?: throw BadRequestException(FailureMessages.UNAUTHORIZED_MESSAGE)
+
+                val page = runCatching { call.request.queryParameters["page"]?.toInt() }.getOrNull() ?: 1
+
+                val inventoryResponse = inventoryController.getAllInventory(authPrincipal.deviceId, page)
+
+                val response = inventoryResponse.generateHttpResponse()
+
+                call.respond(response.code, response.body)
+            }
+        }
+    }
 }
