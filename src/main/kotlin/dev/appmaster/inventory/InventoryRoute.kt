@@ -86,4 +86,16 @@ fun Route.inventoryRoute() {
             }
         }
     }
+
+    route(EndPoint.InventoryUpdate.path) {
+        authenticate {
+            post {
+                handleRouteWithFile(
+                    call = call
+                ) { deviceId, json, filename, fileBytes ->
+                    inventoryController.updateInventory(deviceId, json, filename, fileBytes)
+                }
+            }
+        }
+    }
 }

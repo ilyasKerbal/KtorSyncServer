@@ -37,6 +37,7 @@ data class Inventory(
         )
 
         fun fromInventoryRequest(request: InventoryRequest) = Inventory(
+            id = request.id,
             title = request.title,
             description = request.description,
             barCode = request.barCode,

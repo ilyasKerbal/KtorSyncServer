@@ -8,6 +8,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 import java.util.UUID
 
 interface ItemsDao {
@@ -22,6 +23,10 @@ interface ItemsDao {
     fun countItemsForUser(userId: EntityID<UUID>): Long
 
     fun getItemsFroUser(userId: EntityID<UUID>, limit: Int, skip: Long): List<Inventory>
+
+    fun userCanEditItem(userId: EntityID<UUID>, itemId: EntityID<UUID>): Boolean
+
+    fun updateItem(inventory: Inventory): Inventory
 }
 
 class ItemsDaoImpl : ItemsDao {
@@ -67,9 +72,26 @@ class ItemsDaoImpl : ItemsDao {
         EntityItem.find {
             Items.user eq userId
         }.orderBy(Items.createDate to SortOrder.DESC).limit(n = limit, offset = skip).map { entity ->
-            val item = Inventory.fromItemEntity(entity)
-            item.imageTag = item.imageTag?.let { "/images/$it" }
-            item
+            Inventory.fromItemEntity(entity)
         }
+    }
+
+    override fun userCanEditItem(userId: EntityID<UUID>, itemId: EntityID<UUID>): Boolean = transaction {
+        EntityItem[itemId].user.id == userId
+    }
+
+    override fun updateItem(inventory: Inventory): Inventory = transaction {
+        val entity = EntityItem[UUID.fromString(inventory.id)].apply {
+            this.title = inventory.title
+            this.description = inventory.description
+            this.barcode = inventory.barCode
+            this.imageTag = inventory.imageTag
+            this.lowStockAlert = inventory.lowStockAlert
+            this.lowStock = inventory.lowStock
+            this.expiryDateAlert = inventory.expiryDateAlert
+            this.expiryDate = Inventory.fromLocalDateToJoda(inventory.expiryDate)
+            this.updateDate = DateTime.now()
+        }
+        Inventory.fromItemEntity(entity)
     }
 }
