@@ -4,7 +4,13 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-src/main/resources/uploads/*
+src/main/resources/uploads/*.jpg
+src/main/resources/uploads/*.jpge
+src/main/resources/uploads/*.png
+src/main/resources/uploads/*.webp
+src/main/resources/uploads/*.mp4
+
+.DS_Store
 
 ### STS ###
 .apt_generated
